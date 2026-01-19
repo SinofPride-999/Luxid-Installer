@@ -1,0 +1,94 @@
+Project Creation Plan
+    Goal:
+        When the user runs => `luxid new blog`
+        the installer should:
+            1. Copy the luxid/framework skeleton to the new folder blog
+            2. Create any missing directories if needed
+            3. Generate a .env file for the project
+            4. Set MySQL defaults in .env
+
+    Step 1 - Skeleton Copy
+        . Source: luxid/framework
+        . Destination: ./blog (or normalized project name)
+        . Include:
+            . app/
+            . config/
+            . routes/
+            . migrations/
+            . screens/
+            . web/
+            . composer.json & composer.lock
+        . Exclude:
+            . vendor/ (would run `composer install` later)
+        . Implementation:
+            . Use a `ProjectCreator` service class
+            . Recursively copy directories and files
+            . Ensure permissions are preserved
+
+    Step 2 - Create Missing Directories
+        . Even though skeleton has most directories, ensure the following exists:
+            . app/Actions/
+            . app/Entities/
+            . app/Middleware/ (Sometimes empty)
+            . config/
+            . routes/
+            . migrations/
+            . screens/
+            . web/
+        . Use a helper like `Path::ensureDirectory()` to make it idempotent
+
+    Step 3 - Generate .env
+        . Copy `.env.example` from the skeleton into the new project folder
+        . Default variables
+        . Write to {project_name}/.env
+
+    Step 4 - MySQL Defaults
+        .
+
+    Step 5 - Integrate into NewCommand
+        . Call  `ProjectCreator::create($name)` after environmentt check passes
+        . Provide informative output:
+            "
+                Creating Luxid application: blog
+                Skeleton copied
+                Directories created
+                .env generated
+                Project ready! Next steps:
+                cd blog
+                composer install
+            "
+
+
+Services & Responsibilities
+    ProjectCreator
+        . Responsible for all filesystem operations
+        . Methods:
+            . copySkeleton($source, $destination)
+            . createDirectories($destination)
+            . generateEnv($destination, $projectName)
+
+    Support/Helpers
+        Path   ->     directory & file utilities
+        Str      ->     generate random APP_KEY, normalize strings
+
+    Flow inside `NewCommand`
+        1. Normalize project name
+        2. Validate project name
+        3. Run EnvironmentChecker
+        4. Call ProjectCreator::create($name)
+        5. Success message & instructions
+
+Visual User Flow
+    User: php bin/luxid new blog
+                    ▼
+    Validate project name
+                    ▼
+    Run environment check
+                    ▼
+    ProjectCreator copies skeleton
+                    ▼
+    Directories created if missing
+                    ▼
+    .env generated with MySQL defaults
+                    ▼
+    Display success message
