@@ -81,5 +81,17 @@ class NewCommand extends Command
 
         return Command::SUCCESS;
     }
+
+    private function errorInvalidName(string $raw, string $normalized): void
+    {
+        $this->io->error("Invalid project name \"{$raw}\".");
+
+        if ($raw !== $normalized && ProjectName::isValid($normalized)) {
+            $this->io->writeln('');
+            $this->io->writeln('Did you mean:');
+            $this->io->writeln("  <info>{$normalized}</info>");
+        }
+    }
+
 }
 
