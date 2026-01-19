@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Luxid\Installer\Commands;
 
+use Luxid\Installer\Concerns\InteractsWithIO;
+use Luxid\Installer\Support\Str;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,6 +16,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class NewCommand extends Command
 {
+    use InteractsWithIO;
+
     /**
      * Configure the command name, arguments, and description
      */
@@ -31,9 +35,18 @@ class NewCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->initIO($input, $output);
+
         $name = $input->getArgument('name');
 
-        $output->writeln("<info>Creating Luxid application:</info> {$name}");
+        if (!Str::isValidProjectName($name)) {
+            $this->error(
+                'Invalid project name. Use lowercase letters, numbers, hyphens or underscores only.'
+            );
+            return Command::FAILURE;
+        }
+
+        $this->info("Creating Luxid application: {$name}");
 
         return Command::SUCCESS;
     }
