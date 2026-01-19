@@ -6,6 +6,9 @@ namespace Luxid\Installer\Commands;
 
 use Luxid\Installer\Concerns\InteractsWithIO;
 use Luxid\Installer\Support\Str;
+use Luxid\Installer\Services\EnvironmentChecker;
+use Luxid\Installer\Exceptions\InstallerException;
+
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -56,6 +59,15 @@ class NewCommand extends Command
             return Command::FAILURE;
         }
 
+        try {
+            (new EnvironmentChecker())->check();
+        } catch (InstallerException $e) {
+            $this->error('Environment check failed: ' . $e->getMessage());
+
+            return Command::FAILURE;
+        }
+
+        $this->info("Environment check passed OK.");
         $this->info("Creating Luxid application: {$name}");
 
         return Command::SUCCESS;
