@@ -39,10 +39,20 @@ class NewCommand extends Command
 
         $name = $input->getArgument('name');
 
-        if (!Str::isValidProjectName($name)) {
+        // Detect accidental spaces (e.g. luxid new blog app)
+        if (preg_match('/\s/', $name)) {
+            $this->error(
+                'Project name must be a single word. Use hyphens instead: blog-app'
+            );
+
+            return Command::FAILURE;
+        }
+
+        if (! Str::isValidProjectName($name)) {
             $this->error(
                 'Invalid project name. Use lowercase letters, numbers, hyphens or underscores only.'
             );
+
             return Command::FAILURE;
         }
 
