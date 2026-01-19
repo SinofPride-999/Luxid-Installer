@@ -9,6 +9,34 @@ use Luxid\Installer\Exceptions\InstallerException;
 
 class ProjectCreator
 {
+    protected string $destination;
+
+    public function __construct(string $destination)
+    {
+        $this->destination = $destination;
+    }
+
+    /**
+     * Create all required directories for a Luxid project
+     */
+    public function createDirectories(): void
+    {
+        $directories = [
+            $this->destination . '/app/Actions',
+            $this->destination . '/app/Entities',
+            $this->destination . '/app/Middleware', // Sometimes empty
+            $this->destination . '/config',
+            $this->destination . '/routes',
+            $this->destination . '/migrations',
+            $this->destination . '/screens',
+            $this->destination . '/web',
+        ];
+
+        foreach ($directories as $dir) {
+            Path::ensureDirectory($dir);
+        }
+    }
+
     /**
      * Copy the Luxid framework skeleton to a new project folder
      *
