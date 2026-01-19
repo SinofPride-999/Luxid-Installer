@@ -1,0 +1,15 @@
+Build Plan (5 Stages)
+    Stage 1 - CLI Bootstrap & Application Wiring
+        Make `luxid` executable and wire Symfony Console correctly.
+
+    Stage 2 - Core Commands
+        Implement `new`, `help`, `version` commands cleanly.
+
+    Stage 3 - Environment & System Checks
+        PHP, Composer, MySQL (pdo_mysql), OS handling.
+
+    Stage 4 - Project Creation Pipeline
+        Folder creation, skeleton copy, `.env`, app key, composer install.
+
+    Stage 5 - Polishing
+        Error handling, banners, DX, tests, future-proofing
