@@ -90,4 +90,34 @@ class ProjectCreator
         }
     }
 
+    /**
+     * Copy .env.example to .env in the new project
+     *
+     * @param string $skeletonPath Path to luxid/framework
+     */
+    public function generateEnv(string $skeletonPath): void
+    {
+        $sourceEnv = $skeletonPath . '/.env.example';
+        $destEnv   = $this->destination . '/.env';
+
+        if (!file_exists($sourceEnv)) {
+            throw new InstallerException(".env.example not found in skeleton: {$sourceEnv}");
+        }
+
+        // Copy the file
+        copy($sourceEnv, $destEnv);
+
+        // Optionally: set MySQL defaults (from .env.example)
+        $contents = file_get_contents($destEnv);
+
+        // Replace placeholder values (if needed)
+        $contents = preg_replace('/DB_DSN=.*$/m', 'DB_DSN=mysql:host=127.0.0.1;port=3306;dbname=' . basename($this->destination), $contents);
+        $contents = preg_replace('/DB_USER=.*$/m', 'DB_USER=root', $contents);
+        $contents = preg_replace('/DB_PASSWORD=.*$/m', 'DB_PASSWORD=', $contents);
+
+        file_put_contents($destEnv, $contents);
+
+        echo ".env file generated with MySQL defaults." . PHP_EOL;
+    }
+
 }
