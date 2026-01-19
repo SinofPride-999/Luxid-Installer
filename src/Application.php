@@ -6,7 +6,6 @@ namespace Luxid\Installer;
 
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Luxid\Installer\Commands\NewCommand;
-use Luxid\Installer\Commands\HelpCommand;
 use Luxid\Installer\Commands\VersionCommand;
 
 /**
@@ -34,7 +33,6 @@ class Application extends SymfonyApplication
     private function registerCommands(): void
     {
         $this->add(new NewCommand());
-        $this->add(new HelpCommand());
         $this->add(new VersionCommand());
     }
 
