@@ -24,7 +24,7 @@ class ProjectCreator
         $directories = [
             $this->destination . '/app/Actions',
             $this->destination . '/app/Entities',
-            $this->destination . '/app/Middleware', // Sometimes empty
+            $this->destination . '/app/Middleware',
             $this->destination . '/config',
             $this->destination . '/routes',
             $this->destination . '/migrations',
@@ -50,10 +50,7 @@ class ProjectCreator
             throw new InstallerException("Skeleton source folder does not exist: {$source}");
         }
 
-        // Ensure destination exists
         Path::ensureDirectory($destination);
-
-        // Recursively copy files
         $this->recursiveCopy($source, $destination);
 
         echo "Skeleton copied from {$source} → {$destination}" . PHP_EOL;
@@ -69,22 +66,16 @@ class ProjectCreator
     {
         $items = scandir($src);
 
-        if ($items === false) {
-            return;
-        }
+        if ($items === false) return;
 
         foreach ($items as $item) {
-            if ($item === '.' || $item === '..') {
-                continue;
-            }
+            if ($item === '.' || $item === '..') continue;
 
             $sourcePath = $src . DIRECTORY_SEPARATOR . $item;
             $destPath   = $dst . DIRECTORY_SEPARATOR . $item;
 
             // Skip vendor folder
-            if ($item === 'vendor') {
-                continue;
-            }
+            if ($item === 'vendor') continue;
 
             if (is_dir($sourcePath)) {
                 // Create directory if not exists
@@ -98,4 +89,5 @@ class ProjectCreator
             }
         }
     }
+
 }
