@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Luxid Installer CLI Entry Point
+ */
+
+ declare(strict_types=1);
+
+ // Ensure errors are visible during development
+ error_reporting(E_ALL);
+ ini_set('display_errors', '1');
+
+ // Load the Composer autoloader
+ require __DIR__ . '/../vendor/autoload.php';
+
+ use Luxid\Installer\Application;
+
+// Boot the CLI Application
+$app = new Application();
+$app->run();
