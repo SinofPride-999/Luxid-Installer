@@ -8,6 +8,7 @@ use Luxid\Installer\Concerns\InteractsWithIO;
 use Luxid\Installer\Support\Str;
 use Luxid\Installer\Services\EnvironmentChecker;
 use Luxid\Installer\Exceptions\InstallerException;
+use Luxid\Installer\Support\ProjectName;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -40,7 +41,15 @@ class NewCommand extends Command
     {
         $this->initIO($input, $output);
 
-        $name = $input->getArgument('name');
+        $rawName = $input->getArgument('name');
+        $normalized = ProjectName::normalize($rawName);
+
+        if (! ProjectName::isValid($normalized)) {
+            $this->errorInvalidName($rawName, $normalized);
+            return Command::FAILURE;
+        }
+
+        $name = $normalized;
 
         // Detect accidental spaces (e.g. luxid new blog app)
         if (preg_match('/\s/', $name)) {
