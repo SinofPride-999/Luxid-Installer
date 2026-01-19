@@ -13,7 +13,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class VersionCommand extends Command
 {
-    protected static $defaultName = 'version';
+    protected function configure(): void
+    {
+        $this
+            ->setName('version')
+            ->setDescription('Display the Luxid installer version');
+    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -22,4 +27,3 @@ class VersionCommand extends Command
         return Command::SUCCESS;
     }
 }
-

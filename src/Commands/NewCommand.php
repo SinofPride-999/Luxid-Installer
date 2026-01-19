@@ -13,7 +13,15 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class NewCommand extends Command
 {
-    protected static $defaultName = 'new';
+    /**
+     * Configure the command name, arguments, and description
+     */
+    protected function configure(): void
+    {
+        $this
+            ->setName('new')
+            ->setDescription('Create a new Luxid application');
+    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
