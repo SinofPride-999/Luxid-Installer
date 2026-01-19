@@ -1,0 +1,21 @@
+{
+    "name": "luxid/installer",
+    "description": "Luxid framework official CLI installer",
+    "type": "library",
+    "require": {
+        "symfony/console": "^7.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Luxid\\Installer\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jhay",
+            "email": "jhay@luxid.dev"
+        }
+    ],
+    "minimum-stability": "dev"
+}

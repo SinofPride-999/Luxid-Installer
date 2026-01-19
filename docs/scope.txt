@@ -1,0 +1,227 @@
+1. What Luxid Installer is (Scope)
+    Luxid Installer is a CLI scaffolding tool:  `luxid new <app_name>`
+    It's job is not to be a framework runtime.
+    It's only responsibilities:
+        . Validate environment
+        . Ask the user questions
+        . Create a project structure
+        . Prepare configuration
+        . Run composer
+        . Exit cleanly
+    Once the project is created -> Luxid Engine takes over
+
+2. User Flow (Terminal)
+    . Example Usage
+        luxid new blog
+
+    . Step-by-step Flow
+        1. User runs "luxid new blog"
+        2. bin/luxid boots the CLI application
+        3. Symfony Console resolves the "new" command
+        4. NewCommand starts execution
+
+        5. Environment checks
+            - PHP version
+            - Composer installed
+            - MySQL client availability
+            - OS compatibility
+            - Required PHP extensions (pdo_mysql)
+
+        6. User interaction
+            - Project name confirmation
+            - Optional flags (future):
+                --mysql
+                --api
+                --auth
+
+        7. Project creation
+            - Create project directory
+            - Copy Luxid skeleton
+            - Configure MySQL defaults
+            - Generate app key
+
+        8. Dependency installation
+            - composer install
+
+        9. Final output
+            - Success banner
+            - Next steps instructions
+
+3. High-Level Architecture (Mental Model)
+    Three Concentric Circles:
+        CLI Entry
+                ↓
+        Application Core
+                ↓
+        Services (Pure logic)
+
+    Layer 1 — CLI Entry (Thin)
+        Handles input/output
+        Delegates everything else
+        No business logic
+
+    Layer 2 — Application Core (Coordinator)
+        Knows what to do
+        Orchestrates services
+        Decides the order of operations
+
+    Layer 3 — Services (Workhorses)
+        Each service does one thing
+        No CLI knowledge
+        Testable in isolation
+
+4. File & Namespace Design
+    # bin/luxid - Entry Point
+    Purpose:
+        . Executable CLI file
+        . Bootstraps autoload
+        . Starts the application
+
+    # src/Application.php - Application Kernel
+    Role:
+        . Central coordinator
+        . Registers commands
+        . Hold shared state
+    Responsibilities:
+        . Create Symfony Console Application
+        . Register all commands
+        . Set name/version
+    Interactions:
+        . Talks to Commands\*
+        . Does NOT talk to Services directly
+        Application
+        ├── registers NewCommand
+        ├── registers HelpCommand
+        └── registers VersionCommand
+
+    # src/Commands/*
+    Each command represents one user intention.
+
+    `NewCommand.php`
+    This is the most important file
+        Responsibilities:
+            . Parse arguments/options
+            . Control the flow
+            . Call services in order
+            . Handle errors
+        It should NOT:
+            . Touch the filesystem directly
+            . Run shell commands directly
+            . Contain business logic
+        Typical flow inside execute():
+            1. Read project name
+            2. Run EnvironmentChecker
+            3. Ask user questions (IO trait)
+            4. Call ProjectCreator
+            5. Call ComposerRunner
+            6. Output success
+
+    `HelpCommand.php`
+    Simple informational command.
+
+    `VersionCommand.php`
+    Just prints version.
+
+    # src/Concerns/InteractsWithIO.php
+        Why this exists?
+            You don't want IO code duplicated accross commands.
+        Purpose:
+            . Wrap Symfony Console I/O
+            . Provide helper methods
+        Example:
+            $this->info("Creating project...");
+            $this->error("Composer not found");
+            $this->ask("Project name?");
+            $this->confirm("Install dependencies?");
+        This keeps commands readable.
+
+    # src/Services/* - Bussiness Logic Layer
+        These are the brains.
+
+        `EnvironmentChecker.php`
+            Responsibility:
+                . Validate system requirements
+            Checks:
+                . PHP version
+                . Composer installed
+                . OS support
+                . Required extensions
+            Throws:
+                . `InstallerException` on failure
+            Used by:
+                . `NewCommand`
+
+        `ProjectCreator.php`
+            Responsibility:
+                . Create Luxid project structure
+            Does:
+                . Create directories
+                . Copy stub files
+                . Replace placeholders
+                . Generate config
+            Does NOT:
+                . Run composer
+                . Ask user questions
+
+        `ComposerRunner.php`
+            Responsibility:
+                . Run composer commands safely
+            Encapsulates:
+                . `composer install`
+                . `composer update`
+                . Process handling
+            Why separate:
+                . Allows mocking in tests
+                . Allows disabling composer
+
+    # src/Support/* - Pure Utilities
+        These are stateless helpers.
+
+        `Str.php`
+            . slug()
+            . studly()
+            . random()
+            . replaceTokens()
+
+        `Path.php`
+            . normalize paths
+            . join paths
+            . ensure directory exists
+
+        `OS.php`
+            . isWindows()
+            . isLinux()
+            . command prefixes
+
+        This should have no side effects
+
+    # src/Exceptions/InstallerException
+        Purpose:
+            . Single exception type for installer failures
+            . Cleaner error handling
+
+    # resources
+    resources/banners/logo.txt
+        Used for:
+            . Startup banner
+            . Success screen
+
+    # tests/Feature/NewCommandTest.php
+        What to tes:
+            . Command runs successfully
+            . Directory created
+            . Errors thrown properly
+
+        What NOT to test:
+            . Symfony internals
+            . Composer behavior
+
+    # Dependency Direction
+        Commands → Services → Support
+        Commands → Concerns
+        Services → Support
+        ❌ Support → Services
+        ❌ Services → Commands
+        ❌ Commands → Commands
+
+NB: Commands orchestrates. Services execute. Support assists.
