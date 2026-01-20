@@ -11,6 +11,9 @@
             "Luxid\\Installer\\": "src/"
         }
     },
+    "bin": [
+        "bin/luxid"
+    ],
     "authors": [
         {
             "name": "Jhay",
