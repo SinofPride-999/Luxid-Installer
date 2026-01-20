@@ -24,7 +24,21 @@ class Application extends SymfonyApplication
         );
 
         // Register commands
+        $this->displayBanner();
         $this->registerCommands();
+    }
+
+    /**
+     * Show Luxid banner.
+     */
+    public function displayBanner()
+    {
+        $banner = __DIR__ . '/../resources/banners/logo.txt';
+
+        if (file_exists($banner)) {
+            $this->getOutput()->writeln(file_get_contents($banner));
+            $this->getOutput()->writeln('');
+        }
     }
 
     /**
