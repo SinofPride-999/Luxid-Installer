@@ -8,6 +8,9 @@ use Symfony\Component\Console\Application as SymfonyApplication;
 use Luxid\Installer\Commands\NewCommand;
 use Luxid\Installer\Commands\VersionCommand;
 
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
 /**
  * Main Luxid Installer Console Application
  */
@@ -24,20 +27,26 @@ class Application extends SymfonyApplication
         );
 
         // Register commands
-        $this->displayBanner();
         $this->registerCommands();
+    }
+
+    protected function doRun(InputInterface $input, OutputInterface $output): int
+    {
+        $this->displayBanner($output);
+
+        return parent::doRun($input, $output);
     }
 
     /**
      * Show Luxid banner.
      */
-    protected function displayBanner()
+    protected function displayBanner(OutputInterface $output)
     {
         $banner = __DIR__ . '/../resources/banners/logo.txt';
 
         if (file_exists($banner)) {
-            $this->getOutput()->writeln(file_get_contents($banner));
-            $this->getOutput()->writeln('');
+            $output->writeln(file_get_contents(filename: $banner));
+            $output->writeln('');
         }
     }
 
