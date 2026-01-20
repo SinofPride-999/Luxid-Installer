@@ -30,7 +30,7 @@ class Application extends SymfonyApplication
         $this->registerCommands();
     }
 
-    protected function doRun(InputInterface $input, OutputInterface $output): int
+    public function doRun(InputInterface $input, OutputInterface $output): int
     {
         $this->displayBanner($output);
 
