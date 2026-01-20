@@ -31,7 +31,7 @@ class Application extends SymfonyApplication
     /**
      * Show Luxid banner.
      */
-    public function displayBanner()
+    protected function displayBanner()
     {
         $banner = __DIR__ . '/../resources/banners/logo.txt';
 
