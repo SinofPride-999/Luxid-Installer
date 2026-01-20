@@ -9,6 +9,7 @@ use Luxid\Installer\Support\Str;
 use Luxid\Installer\Services\EnvironmentChecker;
 use Luxid\Installer\Exceptions\InstallerException;
 use Luxid\Installer\Support\ProjectName;
+use Luxid\Installer\Services\ProjectCreator;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -49,10 +50,10 @@ class NewCommand extends Command
             return Command::FAILURE;
         }
 
-        $name = $normalized;
+        $projectName = $normalized;
 
         // Detect accidental spaces (e.g. luxid new blog app)
-        if (preg_match('/\s/', $name)) {
+        if (preg_match('/\s/', $projectName)) {
             $this->error(
                 'Project name must be a single word. Use hyphens instead: blog-app'
             );
@@ -60,7 +61,7 @@ class NewCommand extends Command
             return Command::FAILURE;
         }
 
-        if (! Str::isValidProjectName($name)) {
+        if (! Str::isValidProjectName($projectName)) {
             $this->error(
                 'Invalid project name. Use lowercase letters, numbers, hyphens or underscores only.'
             );
@@ -68,6 +69,7 @@ class NewCommand extends Command
             return Command::FAILURE;
         }
 
+        // Run environment checks
         try {
             (new EnvironmentChecker())->check();
         } catch (InstallerException $e) {
@@ -77,7 +79,30 @@ class NewCommand extends Command
         }
 
         $this->info("Environment check passed OK.");
-        $this->info("Creating Luxid application: {$name}");
+
+        // ---- PROJECT CREATION ----
+        $this->info("Creating Luxid application: {$projectName}");
+
+        $command = sprintf(
+            'composer create-project luxid/framework %s',
+        escapeshellarg($projectName)
+        );
+
+        passthru($command, $status);
+
+        if ($status !== 0) {
+            $this->error("Failed to create Luxid application.");
+
+            return Command::FAILURE;
+        }
+
+        // Success message
+        $this->io->newLine();
+        $this->info("Project ready!");
+        $this->io->writeln("Next steps:");
+        $this->io->writeln("  cd {$projectName}");
+        $this->io->writeln("  composer install");
+        $this->io->newLine();
 
         return Command::SUCCESS;
     }
@@ -87,7 +112,7 @@ class NewCommand extends Command
         $this->io->error("Invalid project name \"{$raw}\".");
 
         if ($raw !== $normalized && ProjectName::isValid($normalized)) {
-            $this->io->writeln('');
+            $this->io->newLine();
             $this->io->writeln('Did you mean:');
             $this->io->writeln("  <info>{$normalized}</info>");
         }
