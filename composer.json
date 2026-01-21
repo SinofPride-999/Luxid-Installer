@@ -11,15 +11,11 @@
             "Luxid\\Installer\\": "src/"
         }
     },
-    "bin": [
-        "bin/luxid"
-    ],
     "authors": [
         {
             "name": "Jhay",
             "email": "jhay@luxid.dev"
         }
     ],
-    "minimum-stability": "stable",
-    "prefer-stable": true
+    "minimum-stability": "dev"
 }

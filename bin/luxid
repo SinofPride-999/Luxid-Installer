@@ -12,7 +12,18 @@
  ini_set('display_errors', '1');
 
  // Load the Composer autoloader
- require __DIR__ . '/../vendor/autoload.php';
+$autoloadPaths = [
+    __DIR__ . '/../vendor/autoload.php',          // local dev
+    __DIR__ . '/../../../autoload.php',            // global install
+];
+
+foreach ($autoloadPaths as $autoload) {
+    if (file_exists($autoload)) {
+        require $autoload;
+        break;
+    }
+}
+
 
  use Luxid\Installer\Application;
 
