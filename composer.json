@@ -5,6 +5,9 @@
     "require": {
         "symfony/console": "^7.0"
     },
+    "bin": [
+        "bin/luxid"
+    ],
     "license": "MIT",
     "autoload": {
         "psr-4": {
