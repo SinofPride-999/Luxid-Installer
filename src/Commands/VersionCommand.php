@@ -22,7 +22,12 @@ class VersionCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('<info>Luxid Installer v0.1.0-dev</info>');
+        $app = $this->getApplication();
+
+        $name = $app->getName() ?? 'Luxid Installer';
+        $version = $app->getVersion() ?? 'unknown';
+
+        $output->writeln("<info>{$name} {$version}</info>");
 
         return Command::SUCCESS;
     }

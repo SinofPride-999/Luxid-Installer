@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Luxid\Installer;
 
-use Symfony\Component\Console\Application as SymfonyApplication;
 use Luxid\Installer\Commands\NewCommand;
 use Luxid\Installer\Commands\VersionCommand;
 
+use Symfony\Component\Console\Application as SymfonyApplication;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Composer\InstalledVersions;
 
 /**
  * Main Luxid Installer Console Application
@@ -66,6 +67,7 @@ class Application extends SymfonyApplication
      */
     private function getInstallerVersion(): string
     {
-        return '0.1.0-dev';
+        return InstalledVersions::getPrettyVersion('luxid/installer')
+             ?? 'dev-main';
     }
 }
