@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Luxid\Installer;
 
-use Luxid\Installer\Commands\NewCommand;
+use Luxid\Installer\Commands\CreateProjectCommand;
 use Luxid\Installer\Commands\VersionCommand;
 
 use Symfony\Component\Console\Application as SymfonyApplication;
@@ -56,7 +56,7 @@ class Application extends SymfonyApplication
      */
     private function registerCommands(): void
     {
-        $this->add(new NewCommand());
+        $this->add(new CreateProjectCommand());
         $this->add(new VersionCommand());
     }
 

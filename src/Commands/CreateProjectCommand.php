@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Create a new Luxid application
  */
-class NewCommand extends Command
+class CreateProjectCommand extends Command
 {
     use InteractsWithIO;
 
@@ -29,7 +29,7 @@ class NewCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('new')
+            ->setName('create:project')
             ->setDescription('Create a new Luxid application')
             ->addArgument(
                 'name',
@@ -52,7 +52,7 @@ class NewCommand extends Command
 
         $projectName = $normalized;
 
-        // Detect accidental spaces (e.g. luxid new blog app)
+        // Detect accidental spaces (e.g. luxid create:project blog app)
         if (preg_match('/\s/', $projectName)) {
             $this->error(
                 'Project name must be a single word. Use hyphens instead: blog-app'

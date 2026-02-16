@@ -1,5 +1,5 @@
 1. What Luxid Installer is (Scope)
-    Luxid Installer is a CLI scaffolding tool:  `luxid new <app_name>`
+    Luxid Installer is a CLI scaffolding tool:  `luxid create:project <app_name>`
     It's job is not to be a framework runtime.
     It's only responsibilities:
         . Validate environment
@@ -12,13 +12,13 @@
 
 2. User Flow (Terminal)
     . Example Usage
-        luxid new blog
+        luxid create:project blog
 
     . Step-by-step Flow
-        1. User runs "luxid new blog"
+        1. User runs "luxid create:project blog"
         2. bin/luxid boots the CLI application
         3. Symfony Console resolves the "new" command
-        4. NewCommand starts execution
+        4. CreateProjectCommand starts execution
 
         5. Environment checks
             - PHP version
@@ -90,14 +90,14 @@
         . Talks to Commands\*
         . Does NOT talk to Services directly
         Application
-        ├── registers NewCommand
+        ├── registers CreateProjectCommand
         ├── registers HelpCommand
         └── registers VersionCommand
 
     # src/Commands/*
     Each command represents one user intention.
 
-    `NewCommand.php`
+    `CreateProjectCommand.php`
     This is the most important file
         Responsibilities:
             . Parse arguments/options
@@ -149,7 +149,7 @@
             Throws:
                 . `InstallerException` on failure
             Used by:
-                . `NewCommand`
+                . `CreateProjectCommand`
 
         `ProjectCreator.php`
             Responsibility:
@@ -206,7 +206,7 @@
             . Startup banner
             . Success screen
 
-    # tests/Feature/NewCommandTest.php
+    # tests/Feature/CreateProjectCommandTest.php
         What to tes:
             . Command runs successfully
             . Directory created

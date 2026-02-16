@@ -1,6 +1,6 @@
 Project Creation Plan
     Goal:
-        When the user runs => `luxid new blog`
+        When the user runs => `luxid create:project blog`
         the installer should:
             1. Copy the luxid/framework skeleton to the new folder blog
             2. Create any missing directories if needed
@@ -45,7 +45,7 @@ Project Creation Plan
     Step 4 - MySQL Defaults
         .
 
-    Step 5 - Integrate into NewCommand
+    Step 5 - Integrate into CreateProjectCommand
         . Call  `ProjectCreator::create($name)` after environmentt check passes
         . Provide informative output:
             "
@@ -71,7 +71,7 @@ Services & Responsibilities
         Path   ->     directory & file utilities
         Str      ->     generate random APP_KEY, normalize strings
 
-    Flow inside `NewCommand`
+    Flow inside `CreateProjectCommand`
         1. Normalize project name
         2. Validate project name
         3. Run EnvironmentChecker
@@ -79,7 +79,7 @@ Services & Responsibilities
         5. Success message & instructions
 
 Visual User Flow
-    User: php bin/luxid new blog
+    User: php bin/luxid create:project blog
                     ▼
     Validate project name
                     ▼
